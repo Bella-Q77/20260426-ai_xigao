@@ -1,18 +1,21 @@
 @echo off
+chcp 65001 >nul
+cls
 echo ========================================
-echo   智能文章生成助手
+echo   Zhi Neng Wen Zhang Sheng Cheng Zhu Shou
+echo   (Smart Article Generator)
 echo ========================================
 echo.
 
 cd /d "%~dp0"
 
-echo 正在检查并安装依赖...
+echo Checking and installing dependencies...
 pip install flask requests beautifulsoup4 lxml -i https://pypi.org/simple/
 
 echo.
 echo ========================================
-echo   启动中...
-echo   请在浏览器中打开: http://127.0.0.1:5000
+echo   Starting...
+echo   Please open in browser: http://127.0.0.1:5000
 echo ========================================
 echo.
 

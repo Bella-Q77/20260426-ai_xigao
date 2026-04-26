@@ -426,9 +426,9 @@
                     </div>
                     
                     <div class="tab-content active" id="simple-tab">
-                        <div class="form-group">
-                            <label for="topicInput">文章主题</label>
-                            <input type="text" id="topicInput" placeholder="例如：宝宝辅食添加、职场面试技巧...">
+                        <div class="form-group" id="selectedTopicDisplay" style="display: none;">
+                            <label>当前选中主题</label>
+                            <div style="padding: 12px 16px; background: #f8f9fa; border-radius: 8px; font-weight: 600; color: #667eea;" id="selectedTopicText">-</div>
                         </div>
                         
                         <div class="form-group">
@@ -448,6 +448,11 @@
                     </div>
                     
                     <div class="tab-content" id="advanced-tab">
+                        <div class="form-group" id="selectedTopicDisplayAdvanced" style="display: none;">
+                            <label>当前选中主题</label>
+                            <div style="padding: 12px 16px; background: #f8f9fa; border-radius: 8px; font-weight: 600; color: #667eea;" id="selectedTopicTextAdvanced">-</div>
+                        </div>
+                        
                         <div class="form-group">
                             <label for="articleUrl">参考文章链接</label>
                             <input type="text" id="articleUrl" placeholder="粘贴文章链接，我们将分析其写作风格...">
@@ -463,11 +468,6 @@
                         </div>
                         
                         <div class="form-group" style="margin-top: 20px;">
-                            <label for="topicInputAdvanced">文章主题</label>
-                            <input type="text" id="topicInputAdvanced" placeholder="例如：宝宝辅食添加、职场面试技巧...">
-                        </div>
-                        
-                        <div class="form-group">
                             <label for="categorySelectAdvanced">主题分类</label>
                             <select id="categorySelectAdvanced">
                                 <option value="育儿">育儿</option>
@@ -517,6 +517,7 @@
     <script>
         let currentArticle = '';
         let currentStyleInfo = null;
+        let currentTopic = '';
         
         document.addEventListener('DOMContentLoaded', function() {
             loadHotSearch();
@@ -568,7 +569,7 @@
                     <div class="hot-item">
                         <div class="${rankClass}">${item.rank}</div>
                         <div class="hot-content">
-                            <a href="${item.url}" target="_blank" class="hot-title" onclick="event.preventDefault(); selectTopic('${item.title}')">
+                            <a href="${item.url}" target="_blank" class="hot-title">
                                 ${item.title}
                             </a>
                             <div class="hot-meta">
@@ -576,6 +577,9 @@
                                 热度: ${hotValue}
                             </div>
                         </div>
+                        <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;" onclick="selectTopic('${item.title}')">
+                            选择
+                        </button>
                     </div>
                 `;
             });
@@ -595,13 +599,19 @@
         }
         
         function selectTopic(title) {
-            const simpleInput = document.getElementById('topicInput');
-            const advancedInput = document.getElementById('topicInputAdvanced');
+            currentTopic = title;
             
-            simpleInput.value = title;
-            advancedInput.value = title;
+            const simpleDisplay = document.getElementById('selectedTopicDisplay');
+            const simpleText = document.getElementById('selectedTopicText');
+            const advancedDisplay = document.getElementById('selectedTopicDisplayAdvanced');
+            const advancedText = document.getElementById('selectedTopicTextAdvanced');
             
-            showToast('已填入主题: ' + title);
+            simpleDisplay.style.display = 'block';
+            simpleText.textContent = title;
+            advancedDisplay.style.display = 'block';
+            advancedText.textContent = title;
+            
+            showToast('已选择主题: ' + title);
         }
         
         function switchTab(tabName) {
@@ -667,11 +677,11 @@
         }
         
         async function generateSimpleArticle() {
-            const topic = document.getElementById('topicInput').value.trim();
+            const topic = currentTopic;
             const category = document.getElementById('categorySelect').value;
             
             if (!topic) {
-                showToast('请输入文章主题', 'error');
+                showToast('请先从热门话题榜选择一个主题', 'error');
                 return;
             }
             
@@ -679,11 +689,11 @@
         }
         
         async function generateAdvancedArticle() {
-            const topic = document.getElementById('topicInputAdvanced').value.trim();
+            const topic = currentTopic;
             const category = document.getElementById('categorySelectAdvanced').value;
             
             if (!topic) {
-                showToast('请输入文章主题', 'error');
+                showToast('请先从热门话题榜选择一个主题', 'error');
                 return;
             }
             
